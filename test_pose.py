@@ -69,7 +69,7 @@ def test_pose(dataset_dir, config_name, archive=None, root=None, seq_id=None, no
     CUDA = not param.not_cuda
     CUDA_VISIBLE_DEVICES = param.cuda_visible_devices # int or str formatting comma-seperated-integer like "1,2,3,0" is acceptable
     ANGLE_NORMALIZE_FACTOR = None
-    NETWORK = 0
+    NETWORK = param.network
     IMG_HEIGHT = param.img_height
     IMG_WIDTH = param.img_width
     SEQ_IDS = param.test_sequence if seq_id is None else seq_id
@@ -84,11 +84,12 @@ def test_pose(dataset_dir, config_name, archive=None, root=None, seq_id=None, no
         path_records_dir = os.path.join(root, path_records_dir)
     path_result_dir = os.path.join("result", CONFIG_NAME)
 
-    with open(os.path.join(path_records_dir, "hyperparams.pickle"), 'rb') as f:
-        hparams = pickle.load(f)
-        NETWORK = hparams["NETWORK"]
-        IMG_HEIGHT = hparams["IMG_HEIGHT"]
-        IMG_WIDTH = hparams["IMG_WIDTH"]
+    if os.path.exists(os.path.join(path_records_dir, "hyperparams.pickle")):
+        with open(os.path.join(path_records_dir, "hyperparams.pickle"), 'rb') as f:
+            hparams = pickle.load(f)
+            NETWORK = hparams["NETWORK"]
+            IMG_HEIGHT = hparams["IMG_HEIGHT"]
+            IMG_WIDTH = hparams["IMG_WIDTH"]
     
     if CUDA_VISIBLE_DEVICES is not None: # set CUDA_VISIBLE_DEVICES
         if type(CUDA_VISIBLE_DEVICES) is int:
